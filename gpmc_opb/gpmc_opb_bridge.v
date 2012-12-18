@@ -5,13 +5,7 @@ module gpmc_opb_bridge (
       input  [0:15] GPMC_D_i,
       output [0:15] GPMC_D_o,
       input         GPMC_nADV_ALE,
-      input         GPMC_nCS0,
-      input         GPMC_nCS1,
-      input         GPMC_nCS2,
-      input         GPMC_nCS3,
-      input         GPMC_nCS4,
-      input         GPMC_nCS5,
-      input         GPMC_nCS6,
+      input  [0:6]  GPMC_nCS,
       input         GPMC_nOE,
       input         GPMC_nWE,
       input         GPMC_nWP,
@@ -55,6 +49,24 @@ module gpmc_opb_bridge (
    );
 
 
+   // Latch the GPMC inputs
+
+   reg [0:1]  GPMC_BUSY_reg;
+   reg [1:10] GPMC_A_reg;
+   reg [0:15] GPMC_D_i_reg;
+   reg        GPMC_nADV_ALE_reg;
+   reg [0:6]  GPMC_nCS_reg;
+   reg        GPMC_nOE_reg;
+   reg        GPMC_nWE_reg;
+   reg        GPMC_nWP_reg;
+   /*assign GPMC_BUSY_reg = GPMC_BUSY;
+   assign GPMC_A_reg    = GPMC_A;
+   assign GPMC_D_i      = GPMC_D_i_reg;
+   assign GPMC_nADV_ALE = GPMC_nADV_ALE_reg;
+   assign GPMC_nCS      = GPMC_nCS_reg;
+   assign GPMC_nOE      = GPMC_nOE_reg;
+   assign GPMC_nWE      = GPMC_nWE_reg;
+   assign GPMC_nWP      = GPMC_nWP_reg;*/
 
    /***** OPB Output Assignments *****/
    assign Mn_request = 1'b1;
@@ -62,8 +74,12 @@ module gpmc_opb_bridge (
    assign Mn_seqAddr = 1'b0; //TODO: implement bursting
    assign Mn_BE      = 4'hF;
 
-   assign Mn_RNW = GPMC_nWE;
-  
+   assign Mn_DBus = M_RNW ? 32'b0 : GPMC_D_i_reg;
+
+   always @(posedge OPB_Clk) begin
+      GPMC_BUSY_reg     <= GPMC_BUSY;
+   end
+
 /*
    // ////////////////////////////////////////////
    // Control Path, Wishbone bus bridge (wb master)

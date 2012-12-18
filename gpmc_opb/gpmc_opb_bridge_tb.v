@@ -28,13 +28,7 @@ module gpmc_opb_bridge_tb;
    wire [0:15] GPMC_D_i;
    reg  [0:15] GPMC_D_o;
    reg         GPMC_nADV_ALE;
-   reg         GPMC_nCS0;
-   reg         GPMC_nCS1;
-   reg         GPMC_nCS2;
-   reg         GPMC_nCS3;
-   reg         GPMC_nCS4;
-   reg         GPMC_nCS5;
-   reg         GPMC_nCS6;
+   reg   [0:6] GPMC_nCS;
    reg         GPMC_nOE;
    reg         GPMC_nWE;
    reg         GPMC_nWP;
@@ -72,13 +66,7 @@ module gpmc_opb_bridge_tb;
       .GPMC_D_o      (GPMC_D_i),
       .GPMC_D_i      (GPMC_D_o),
       .GPMC_nADV_ALE (GPMC_nADV_ALE),
-      .GPMC_nCS0     (GPMC_nCS0),
-      .GPMC_nCS1     (GPMC_nCS1),
-      .GPMC_nCS2     (GPMC_nCS2),
-      .GPMC_nCS3     (GPMC_nCS3),
-      .GPMC_nCS4     (GPMC_nCS4),
-      .GPMC_nCS5     (GPMC_nCS5),
-      .GPMC_nCS6     (GPMC_nCS6),
+      .GPMC_nCS      (GPMC_nCS),
       .GPMC_nOE      (GPMC_nOE),
       .GPMC_nWE      (GPMC_nWE),
       .GPMC_nWP      (GPMC_nWP),
@@ -110,13 +98,7 @@ module gpmc_opb_bridge_tb;
    begin
       $dumpvars;
       GPMC_CLK  = 0;
-      GPMC_nCS0 = 1;
-      GPMC_nCS1 = 1;
-      GPMC_nCS2 = 1;
-      GPMC_nCS3 = 1;
-      GPMC_nCS4 = 1;
-      GPMC_nCS5 = 1;
-      GPMC_nCS6 = 1;
+      GPMC_nCS  = 7'b0000010;
       GPMC_nADV_ALE = 1;
       GPMC_nOE = 1;
       GPMC_nWE = 1;
@@ -124,7 +106,7 @@ module gpmc_opb_bridge_tb;
 
       // Read cycle
       #5
-      GPMC_nCS1 = 0;
+      GPMC_nCS  = 7'b0000000;
       GPMC_A    = 16'h0001;
       GPMC_D_o  = 16'h0000;
       #1
@@ -134,13 +116,13 @@ module gpmc_opb_bridge_tb;
       GPMC_nOE = 0;
       #2 
       GPMC_nOE = 1;
-      GPMC_nCS1 = 1;
+      GPMC_nCS  = 7'b0000010;
       GPMC_A    = 16'hxxxx;
       GPMC_D_o  = 16'hxxxx;
       #4
 
       // Write cycle
-      GPMC_nCS1 = 0;
+      GPMC_nCS  = 7'b0000000;
       GPMC_A    = 16'h0001;
       GPMC_D_o  = 16'h0000;
       #1
@@ -151,7 +133,7 @@ module gpmc_opb_bridge_tb;
       GPMC_nWE = 0;
       #2 
       GPMC_nWE = 1;
-      GPMC_nCS1 = 1;
+      GPMC_nCS  = 7'b0000010;
    end
 
    //====================
